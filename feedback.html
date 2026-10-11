@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Feedback Form</title>
+</head>
+<body>
+  <h2>Student Feedback Form</h2>
+
+  <p>Name: <input type="text" id="name"></p>
+  <p>Roll Number: <input type="text" id="rollno"></p>
+  <p>Rating (1-5): <input type="number" id="rating" min="1" max="5"></p>
+  <p>Comment: <input type="text" id="comment"></p>
+
+  <button onclick="submitFeedback()">Submit</button>
+  <p id="result"></p>
+
+  <script>
+    async function submitFeedback() {
+      const payload = {
+        name: document.getElementById("name").value,
+        rollno: document.getElementById("rollno").value,
+        rating: document.getElementById("rating").value,
+        comment: document.getElementById("comment").value
+      };
+
+      try {
+        const response = await fetch(
+          "https://YOUR-API-ID.execute-api.ap-south-1.amazonaws.com/feedback",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          }
+        );
+        const data = await response.json();
+        document.getElementById("result").innerText = data.message;
+      } catch (error) {
+        document.getElementById("result").innerText = "Error submitting feedback";
+      }
+    }
+  </script>
+</body>
+</html>
