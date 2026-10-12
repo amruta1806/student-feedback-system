@@ -26,8 +26,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                bat 'docker build -f Dockerfile.test -t feedback-tests .'
-                bat 'docker run --rm feedback-tests'
+                bat 'python -m pytest -v'
             }
         }
 

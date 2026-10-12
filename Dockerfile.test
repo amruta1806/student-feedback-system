@@ -8,5 +8,5 @@ ENV AWS_DEFAULT_REGION=ap-southeast-2 \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY lambda_function.py test_lambda.py ./
+COPY lambda_function.py summary_lambda.py test_lambda.py test_summary.py ./
 CMD ["python", "-m", "pytest", "-v"]

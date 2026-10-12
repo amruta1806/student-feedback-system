@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Course feedback results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --page: #101b3b;
+      --sheet: #f6f4fb;
+      --print: #c93a5b;
+      --pen: #1b3fbf;
+      --pen-dark: #142f94;
+      --text: #1b2038;
+      --muted: #5a6079;
+      --line: #d9d6e6;
+      --error: #b0233f;
+      --heading: "Archivo", "Arial Narrow", system-ui, sans-serif;
+      --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { background: var(--page); }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 40px 16px 56px;
+      background: var(--page);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 17px;
+      line-height: 1.5;
+    }
+
+    .sheet {
+      position: relative;
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 40px 40px 40px 64px;
+      background: var(--sheet);
+      border-radius: 6px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .sheet::before {
+      content: "";
+      position: absolute;
+      top: 28px;
+      bottom: 28px;
+      left: 22px;
+      width: 12px;
+      background: repeating-linear-gradient(
+        to bottom,
+        var(--text) 0,
+        var(--text) 6px,
+        transparent 6px,
+        transparent 18px
+      );
+      opacity: 0.85;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-family: var(--heading);
+      font-weight: 800;
+      font-size: 2.4rem;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    h2 {
+      margin: 36px 0 12px;
+      font-family: var(--heading);
+      font-weight: 800;
+      font-size: 1.3rem;
+    }
+
+    .lede { margin: 0 0 28px; color: var(--muted); }
+
+    .average {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .average strong {
+      font-family: var(--heading);
+      font-weight: 800;
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--pen);
+    }
+
+    .average span { color: var(--muted); }
+
+    /* Ratings breakdown: one bar per rating, longest bar is the most common rating. */
+    .bars { margin: 0; padding: 0; list-style: none; }
+
+    .bars li {
+      display: grid;
+      grid-template-columns: 24px 1fr 36px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .bars .rating-label { font-family: var(--heading); font-weight: 700; color: var(--print); }
+
+    .track {
+      height: 18px;
+      background: #fff;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+    }
+
+    .fill {
+      display: block;
+      height: 100%;
+      min-width: 0;
+      background: var(--pen);
+      border-radius: 9px;
+    }
+
+    .bars .count { text-align: right; color: var(--muted); }
+
+    .comments { margin: 0; padding: 0; list-style: none; }
+
+    .comments li {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .comments li:last-child { border-bottom: 1px solid var(--line); }
+
+    .mark {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--pen);
+      color: #fff;
+      font-family: var(--heading);
+      font-weight: 700;
+    }
+
+    .comments p { margin: 0; overflow-wrap: anywhere; }
+    .comments .when { margin-top: 2px; font-size: 0.9rem; color: var(--muted); }
+
+    .status { margin: 0 0 16px; color: var(--muted); }
+
+    .problem {
+      margin: 0 0 16px;
+      padding: 12px 14px;
+      color: var(--error);
+      background: #fdecef;
+      border-left: 4px solid var(--error);
+      border-radius: 2px;
+    }
+
+    .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+
+    .button {
+      display: inline-block;
+      min-height: 48px;
+      padding: 11px 20px;
+      font: inherit;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .primary { color: #fff; background: var(--pen); border: 2px solid var(--pen); }
+    .primary:hover { background: var(--pen-dark); border-color: var(--pen-dark); }
+    .secondary { color: var(--pen); background: transparent; border: 2px solid var(--pen); }
+    .secondary:hover { background: #e8ecfb; }
+
+    .button:focus-visible { outline: 3px solid var(--pen); outline-offset: 2px; }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 520px) {
+      body { padding: 16px 12px 40px; }
+      .sheet { padding: 28px 20px 28px 44px; }
+      .sheet::before { left: 14px; width: 10px; }
+      h1 { font-size: 1.9rem; }
+      .average strong { font-size: 3.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <h1>Course feedback results</h1>
+    <p class="lede">Ratings and comments from students. Names and roll numbers are not shown.</p>
+
+    <p id="status" class="status" role="status">Loading results</p>
+    <div id="problem" class="problem" role="alert" hidden></div>
+
+    <section id="results" hidden>
+      <div class="average">
+        <strong id="average">0</strong>
+        <span id="average-note"></span>
+      </div>
+
+      <h2>Ratings</h2>
+      <ul id="bars" class="bars"></ul>
+
+      <h2>Recent comments</h2>
+      <p id="no-comments" class="status" hidden>No comments yet.</p>
+      <ul id="comments" class="comments"></ul>
+    </section>
+
+    <div class="actions">
+      <button id="refresh" class="button primary" type="button">Refresh results</button>
+      <a class="button secondary" href="/">Give feedback</a>
+    </div>
+  </main>
+
+  <script>
+    var SUMMARY_URL = "https://onpuez9u87.execute-api.ap-southeast-2.amazonaws.com/summary";
+
+    var statusEl = document.getElementById("status");
+    var problemEl = document.getElementById("problem");
+    var resultsEl = document.getElementById("results");
+    var refreshBtn = document.getElementById("refresh");
+
+    function formatDate(iso) {
+      if (!iso) { return ""; }
+      var date = new Date(iso);
+      if (isNaN(date.getTime())) { return ""; }
+      return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+    }
+
+    function render(summary) {
+      var average = document.getElementById("average");
+      var note = document.getElementById("average-note");
+
+      if (!summary.count) {
+        average.textContent = "0";
+        note.textContent = "responses so far. Be the first to send feedback.";
+      } else {
+        average.textContent = summary.average.toFixed(1);
+        note.textContent = "out of 5, from " + summary.count + (summary.count === 1 ? " response" : " responses");
+      }
+
+      var bars = document.getElementById("bars");
+      bars.textContent = "";
+      var counts = [5, 4, 3, 2, 1].map(function (n) { return summary.distribution[String(n)] || 0; });
+      var most = Math.max.apply(null, counts.concat([1]));
+
+      [5, 4, 3, 2, 1].forEach(function (n, index) {
+        var row = document.createElement("li");
+
+        var label = document.createElement("span");
+        label.className = "rating-label";
+        label.textContent = String(n);
+
+        var track = document.createElement("span");
+        track.className = "track";
+        var fill = document.createElement("span");
+        fill.className = "fill";
+        fill.style.width = (counts[index] / most * 100) + "%";
+        track.appendChild(fill);
+
+        var count = document.createElement("span");
+        count.className = "count";
+        count.textContent = String(counts[index]);
+
+        row.appendChild(label);
+        row.appendChild(track);
+        row.appendChild(count);
+        bars.appendChild(row);
+      });
+
+      var list = document.getElementById("comments");
+      list.textContent = "";
+      document.getElementById("no-comments").hidden = summary.recent_comments.length > 0;
+
+      summary.recent_comments.forEach(function (entry) {
+        var item = document.createElement("li");
+
+        var mark = document.createElement("span");
+        mark.className = "mark";
+        mark.textContent = entry.rating || "";
+
+        var body = document.createElement("div");
+        var text = document.createElement("p");
+        text.textContent = entry.comment;
+        body.appendChild(text);
+
+        var when = formatDate(entry.submitted_at);
+        if (when) {
+          var date = document.createElement("p");
+          date.className = "when";
+          date.textContent = when;
+          body.appendChild(date);
+        }
+
+        item.appendChild(mark);
+        item.appendChild(body);
+        list.appendChild(item);
+      });
+    }
+
+    function load() {
+      refreshBtn.disabled = true;
+      problemEl.hidden = true;
+      statusEl.hidden = false;
+      statusEl.textContent = "Loading results";
+
+      fetch(SUMMARY_URL)
+        .then(function (response) {
+          if (!response.ok) { throw new Error("Request failed with status " + response.status); }
+          return response.json();
+        })
+        .then(function (summary) {
+          render(summary);
+          resultsEl.hidden = false;
+          statusEl.hidden = true;
+        })
+        .catch(function () {
+          resultsEl.hidden = true;
+          statusEl.hidden = true;
+          problemEl.textContent = "Results could not be loaded. Check your connection and select Refresh results.";
+          problemEl.hidden = false;
+        })
+        .then(function () {
+          refreshBtn.disabled = false;
+        });
+    }
+
+    refreshBtn.addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>
