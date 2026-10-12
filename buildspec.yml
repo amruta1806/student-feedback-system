@@ -1,5 +1,8 @@
 version: 0.2
 
+# Build, test and deploy the Student Feedback System with AWS CodeBuild.
+# CodePipeline runs this file after pulling the code from GitHub.
+
 env:
   variables:
     LAMBDA_NAME: "FeedbackFunction"
